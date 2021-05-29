@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('index') }}" method="POST">
+    <div class="form-group">
+        <label for="url" class="form-label">URL</label>
+        <input type="text" class="form-control" id="url" name="url" aria-describedby="urlHelp" placeholder="URL to be shortened" value="{{ request.form['url'] }}" autofocus>
+        <div id="urlHelp" class="form-text">Paste url link to be shortened here</div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Shorten</button>
+    </div>
+</form>
+{% if short_url %}
+        <span>{{ short_url }}</span>
+{% endif %}
+{% endblock %}
