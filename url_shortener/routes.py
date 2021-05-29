@@ -29,3 +29,26 @@ def index():
         return render_template('index.html', short_url=short_url)
         
     return render_template('index.html')
+
+@app.route('/<id>')
+def url_redirect(id):
+    conn = get_db_connection()
+
+    original_id = hashids.decode(id)
+
+    # if url is saved in database
+    if original_id:
+        original_id = original_id[0]
+        # retrive url using the id
+        url_data = conn.execute('SELECT original_url, clicks FROM urls WHERE id = (?)', (original_id,)).fetchone()
+        original_url = url_data['original_url']
+        clicks = url_data['clicks'] + 1
+        # update clicks count in DB
+        conn.execute('UPDATE urls SET clicks = ? WHERE id = ?', (clicks, original_id))
+        conn.commit()
+        conn.close()
+        return redirect(original_url)
+    #If url is not saved on DB
+    else:
+        flash('Invalid URL!')
+        return redirect(url_for('index'))
